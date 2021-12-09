@@ -1,5 +1,6 @@
 //jshint esversion:6
 
+require('dotenv').config();
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -17,8 +18,7 @@ const userSchema = new mongoose.Schema({
   password: String
 });
 
-const secret = "thisisoursecret";
-userSchema.plugin(encrypt,{secret: secret, encryptedFields: ['password'] });
+userSchema.plugin(encrypt,{secret: process.env.SECRET, encryptedFields: ['password'] });
 
 const User = mongoose.model('User', userSchema);
 
@@ -35,7 +35,7 @@ app.get('/register', function(req, res){
 });
 
 app.get('/logout', function(req, res){
-  res.render('home');
+  res.redirect('/');
 })
 
 app.post('/login', function(req, res){
@@ -53,7 +53,6 @@ app.post('/login', function(req, res){
       }else{
         console.log('There is no user with this username');
       }
-      res.sendStatus(200);
     }else{
       res.send("Error while logging in...");
     }
